@@ -8,7 +8,7 @@ All validations could be implemented at a higher protocol layer.
 This library has been tested with wire connection between two ESP32 and J1850VPW bus of Corvette C6. 
 
 ## Connection
-Use following schematics to connect Arduino to real J1850VPW bus of your vehicle:
+Use following schematics to connect your ESP32 to the J1850VPW bus of your vehicle:
 ![schematics](img/schematics.jpg)
 
 Connections:
