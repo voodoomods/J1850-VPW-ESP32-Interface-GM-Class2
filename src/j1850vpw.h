@@ -1,11 +1,17 @@
 /*************************************************************************
-**  AVR J1850VPW VPW Interface
-**  by Stepan Matafonov
+**  ESP32 J1850VPW Interface (GM Class 2 Serial)
+**  by Nicolas Houghtaling @ VoodooMods
+**
+**  Former Project J1850-VPW-Arduino-Transceiver-Library
+**  https://github.com/matafonoff/J1850-VPW-Arduino-Transceiver-Library
+**  by Stepan Matafonov -> matafonoff -> xelb.ru 
+**
+**  Thank you Stephan for your brilliant work sir 
 **
 **  Released under Microsoft Public License
 **
-**  contact: matafonoff@gmail.com
-**  homepage: xelb.ru
+**  contact: admin@voodoomods.com
+**  homepage: voodoomods.com
 **************************************************************************/
 #pragma once
 #include <Arduino.h>
@@ -41,10 +47,7 @@ public:
     int length;
 };
 
-class J1850VPWFriend {
-public:
-    static void __handleRnChange(int state, void* pData) ;
-};
+class J1850VPWFriend;// Forward declaration
 
 class J1850VPW {
     friend class J1850VPWFriend;
@@ -75,12 +78,13 @@ private:
 private:
     void onFrameRead();
     J1850_ERRORS handleErrorsInternal(J1850_Operations op, J1850_ERRORS err);
-    void onRxChaged(uint8_t curr);
 
     uint8_t* getBit(uint8_t id, uint8_t *pBit);
 
 public:
     J1850VPW();
+
+	bool DoNothing;
 
     J1850VPW* setActiveLevel(uint8_t active);
 
@@ -91,6 +95,12 @@ public:
 
     int8_t tryGetReceivedFrame(uint8_t *pBuff, bool justValid = true);
     uint8_t send(uint8_t* pData, uint8_t size, int16_t timeoutMs = -1);
+	uint8_t sendWithNoCRC(uint8_t* pData, uint8_t size, int16_t timeoutMs = -1);
+	
+	void RxChanged();
+	
+	J1850VPW* initTx(uint8_t txPin);
+	J1850VPW* killTx(uint8_t txPin);
 
     J1850VPW* listenAll();
     J1850VPW* listen(uint8_t *ids);
@@ -99,4 +109,10 @@ public:
     J1850VPW* ignore(uint8_t *ids);
 
     J1850VPW* onError(onErrorHandler errHandler);
+};
+
+class J1850VPWFriend {
+	public:
+		static void __handleRnChange() ;	
+		static J1850VPW* instance;
 };
