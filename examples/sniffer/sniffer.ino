@@ -1,8 +1,8 @@
 
 #include "j1850vpw.h"
 
-#define TX 9
-#define RX 10
+#define TX 26
+#define RX 25
 
 void handleError(J1850_Operations op, J1850_ERRORS err);
 J1850VPW vpw;
@@ -11,13 +11,12 @@ void setup()
 {
     Serial.begin(115200);           // start serial port
     vpw.onError(handleError); // listen for errors
-    vpw.init(RX);             // init transceiver
+    vpw.init(RX, TX);             // init transceiver
 }
 
 void loop()
 {
     static uint8_t buff[BS];                   // buffer for read message
-    static uint8_t sendBuff[2] = {0x01, 0x02}; // message to send, CRC will be read and appended to frame on the fly
 
     uint8_t dataSize; // size of message
 
@@ -45,9 +44,6 @@ void loop()
 
         Serial.println(s);
     }
-
-    // write simple message to bus
-    vpw.send(sendBuff, sizeof(sendBuff));
 
     delay(1000);
 }

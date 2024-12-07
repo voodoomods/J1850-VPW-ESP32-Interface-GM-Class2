@@ -4,9 +4,9 @@
 **
 **  Former Project J1850-VPW-Arduino-Transceiver-Library
 **  https://github.com/matafonoff/J1850-VPW-Arduino-Transceiver-Library
-**  by Stepan Matafonov -> matafonoff -> xelb.ru 
+**  by Stepan Matafonov -> matafonoff -> xelb.ru
 **
-**  Thank you Stephan for your brilliant work sir 
+**  Thank you Stephan for your brilliant work sir
 **
 **  Released under Microsoft Public License
 **
@@ -21,16 +21,16 @@
 #include "storage.h"
 
 enum J1850_ERRORS {
-    J1850_OK                        = 0x00,
-    J1850_ERR_BUS_IS_BUSY           = 0x81,
-    J1850_ERR_BUS_ERROR             = 0x82,
+    J1850_OK = 0x00,
+    J1850_ERR_BUS_IS_BUSY = 0x81,
+    J1850_ERR_BUS_ERROR = 0x82,
     J1850_ERR_RECV_NOT_CONFIGURATED = 0x84,
-    J1850_ERR_PULSE_TOO_SHORT       = 0x85,
-    J1850_ERR_PULSE_OUTSIDE_FRAME   = 0x86,
-    J1850_ERR_ARBITRATION_LOST      = 0x87,
-    J1850_ERR_PULSE_TOO_LONG        = 0x88,
-    J1850_ERR_IFR_RX_NOT_SUPPORTED  = 0x89,
-    J1850_ERR_CRC                   = 0x90
+    J1850_ERR_PULSE_TOO_SHORT = 0x85,
+    J1850_ERR_PULSE_OUTSIDE_FRAME = 0x86,
+    J1850_ERR_ARBITRATION_LOST = 0x87,
+    J1850_ERR_PULSE_TOO_LONG = 0x88,
+    J1850_ERR_IFR_RX_NOT_SUPPORTED = 0x89,
+    J1850_ERR_CRC = 0x90
 };
 
 enum J1850_Operations {
@@ -66,9 +66,9 @@ private:
     volatile uint8_t _byte;
     volatile bool _IFRDetected;
     uint8_t _buff[BS];
-    uint8_t *msg_buf;
+    uint8_t* msg_buf;
 
-    uint8_t  _ignoreList[256/sizeof(uint8_t)];
+    uint8_t  _ignoreList[256 / sizeof(uint8_t)];
 
     Storage _storage = Storage();
     BitInfo bits[BS];
@@ -79,12 +79,12 @@ private:
     void onFrameRead();
     J1850_ERRORS handleErrorsInternal(J1850_Operations op, J1850_ERRORS err);
 
-    uint8_t* getBit(uint8_t id, uint8_t *pBit);
+    uint8_t* getBit(uint8_t id, uint8_t* pBit);
 
 public:
     J1850VPW();
 
-	bool DoNothing;
+    bool DoNothing;
 
     J1850VPW* setActiveLevel(uint8_t active);
 
@@ -93,26 +93,25 @@ public:
 
     bool isReadonly() const;
 
-    int8_t tryGetReceivedFrame(uint8_t *pBuff, bool justValid = true);
+    int8_t tryGetReceivedFrame(uint8_t* pBuff, bool justValid = true);
     uint8_t send(uint8_t* pData, uint8_t size, int16_t timeoutMs = -1);
-	uint8_t sendWithNoCRC(uint8_t* pData, uint8_t size, int16_t timeoutMs = -1);
-	
-	void RxChanged();
-	
-	J1850VPW* initTx(uint8_t txPin);
-	J1850VPW* killTx(uint8_t txPin);
+    uint8_t sendWithNoCRC(uint8_t* pData, uint8_t size, int16_t timeoutMs = -1);
+
+    void RxChanged();
+
+    J1850VPW* initTx(uint8_t txPin);
 
     J1850VPW* listenAll();
-    J1850VPW* listen(uint8_t *ids);
+    J1850VPW* listen(uint8_t* ids);
 
     J1850VPW* ignoreAll();
-    J1850VPW* ignore(uint8_t *ids);
+    J1850VPW* ignore(uint8_t* ids);
 
     J1850VPW* onError(onErrorHandler errHandler);
 };
 
 class J1850VPWFriend {
-	public:
-		static void __handleRnChange() ;	
-		static J1850VPW* instance;
+public:
+    static void __handleRnChange();
+    static J1850VPW* instance;
 };

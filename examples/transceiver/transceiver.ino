@@ -1,8 +1,8 @@
 
 #include "j1850vpw.h"
 
-#define TX 9
-#define RX 10
+#define TX 26
+#define RX 25
 
 void handleError(J1850_Operations op, J1850_ERRORS err);
 

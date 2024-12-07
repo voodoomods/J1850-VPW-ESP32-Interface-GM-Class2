@@ -1,28 +1,28 @@
-# J1850-VPW-Arduino-Transceiver-Library
-Arduino library which allow to communicate on J1850-VPW mode.
-It works with wire. Should work with radio and laser transmissions as well.
+# J1850VPW ESP32 Interface GM Class 2 Serial
+Credit goes to matafonoff for doing all the hard work, I just fixed the interrupts to run on ESP32.
+ESP32 library which allows you to communicate via J1850VPW.
 You just have to choose tx and rx pins.
 It doesn't have either a header nor a parity check, just CRC check. 
 All validations could be implemented at a higher protocol layer.
 
-This library has been tested with wire connection between two Arduino and J1850 vpw bus of Chrysler Pacifica vehicle. 
+This library has been tested with wire connection between two ESP32 and J1850VPW bus of Corvette C6. 
 
 ## Connection
 Use following schematics to connect Arduino to real J1850VPW bus of your vehicle:
 ![schematics](img/schematics.jpg)
 
 Connections:
-* IN -> pin of Arduino that is configured as RX pin for J1850VPW
-* OUT -> pin of Arduino that is configured as TX pin for J1850VPW
-* BUS -> J1850VPW bus (ex. vehicle)
+* J1850_RX -> pin of ESP32 that is configured as RX pin for J1850VPW
+* J1850_TX -> pin of ESP32 that is configured as TX pin for J1850VPW
+* J1850_BUS -> J1850VPW bus (ex. vehicle)
 
 ## Code example
 ~~~~
 
 #include "j1850vpw.h"
 
-#define TX 9
-#define RX 10
+#define TX 26
+#define RX 25
 
 void handleError(J1850_Operations op, J1850_ERRORS err);
 
@@ -117,14 +117,10 @@ void handleError(J1850_Operations op, J1850_ERRORS err)
 }
 ~~~~
 
-#### Based on:
-1. Some code from wiring sources of arduino to implement fast digital IO.
-
 ## NB!
-This software was developed to be used with Chrysler vehicles in a mind. This means that the current protocol implementation misses some features like (IFR).
-
-If you have any ideas of how to implement features you need - feel free to make a pull request. In this case you will be mentioned as a library developer and this library will be developed much faster.
+This software was developed to be used with GM vehicles in a mind, and was tested on a Corvette C6. 
+This means that the current protocol implementation misses some features like (IFR).
+Matafonoff had tested this on the Chrysler Pacifica.
 
 ## P.S.
-This library is rewritten by me to SM chips and I'm working on that code primerially. And yes, I'm not working with Arduino for few monthes already.
-This means I have little time to support Arduino implementation. So if you have any code updates - feel free to use pull requests.
+This library was originally written by matafonoff for AVR Arduinos and modifed to run on ESP32 by VoodooMods

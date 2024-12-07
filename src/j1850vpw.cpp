@@ -4,9 +4,9 @@
 **
 **  Former Project J1850-VPW-Arduino-Transceiver-Library
 **  https://github.com/matafonoff/J1850-VPW-Arduino-Transceiver-Library
-**  by Stepan Matafonov -> matafonoff -> xelb.ru 
+**  by Stepan Matafonov -> matafonoff -> xelb.ru
 **
-**  Thank you Stephan for your brilliant work sir 
+**  Thank you Stephan for your brilliant work sir
 **
 **  Released under Microsoft Public License
 **
@@ -52,10 +52,10 @@
 
 #define IS_BETWEEN(x, min, max) (x >= min && x <= max)
 
-uint8_t crc(uint8_t *msg_buf, int8_t nbytes)
-{	
+uint8_t crc(uint8_t* msg_buf, int8_t nbytes)
+{
     uint8_t crc_reg = 0xff, poly, byte_count, bit_count;
-    uint8_t *byte_point;
+    uint8_t* byte_point;
     uint8_t bit_point;
 
     for (byte_count = 0, byte_point = msg_buf; byte_count < nbytes; ++byte_count, ++byte_point)
@@ -85,7 +85,7 @@ uint8_t crc(uint8_t *msg_buf, int8_t nbytes)
 #define UNKNOWN_PIN 0xFF
 
 J1850_ERRORS J1850VPW::handleErrorsInternal(J1850_Operations op, J1850_ERRORS err)
-{	
+{
     if (err != J1850_OK)
     {
         onErrorHandler errHandler = __errHandler;
@@ -105,7 +105,7 @@ bool J1850VPW::isReadonly() const {
 void J1850VPW::RxChanged()
 {
     uint8_t curr = __rxPin.read();
-	
+
     _currState = curr;
     curr = !curr;
 
@@ -128,7 +128,7 @@ void J1850VPW::RxChanged()
     }
 
     _lastChange = now;
-	//Serial.println(diff);
+    //Serial.println(diff);
     if (diff < RX_SHORT_MIN)
     {
         // too short to be a valid pulse. Data error
@@ -160,12 +160,12 @@ void J1850VPW::RxChanged()
         if (diff > RX_EOF_MIN)
         {
             // data ended - copy package to buffer
-			//digitalWrite(BitBanger_LED_PIN, LOW);//packet ready
+            //digitalWrite(BitBanger_LED_PIN, LOW);//packet ready
             _sofRead = false;
 
             if (!_IFRDetected)
             {
-                    onFrameRead();
+                onFrameRead();
             }
             return;
         }
@@ -189,7 +189,7 @@ void J1850VPW::RxChanged()
             *msg_buf |= 1;
         }
     }
-    if(!_IFRDetected)
+    if (!_IFRDetected)
     {
         _bit++;
         if (_bit == 8)
@@ -199,10 +199,10 @@ void J1850VPW::RxChanged()
             *msg_buf = 0;
             _bit = 0;
         }
-    }    
+    }
     if (_byte == BS)
     {
-		//digitalWrite(BitBanger_LED_PIN, LOW);//packet ready
+        //digitalWrite(BitBanger_LED_PIN, LOW);//packet ready
         _sofRead = false;
         if (!_IFRDetected)
         {
@@ -211,20 +211,20 @@ void J1850VPW::RxChanged()
     }
 }
 
-J1850VPW::J1850VPW() 
-: ACTIVE(LOW)
-, PASSIVE(HIGH)
-, RX(-1)
-, __rxPin(Pin())
-, __txPin(Pin())
-, _lastChange(micros())
-, _sofRead(false)
-, _currState(ACTIVE)
-, _bit(0)
-, _byte(0)
-, msg_buf(NULL)
-, _storage(Storage())
-, __errHandler(NULL)
+J1850VPW::J1850VPW()
+    : ACTIVE(LOW)
+    , PASSIVE(HIGH)
+    , RX(-1)
+    , __rxPin(Pin())
+    , __txPin(Pin())
+    , _lastChange(micros())
+    , _sofRead(false)
+    , _currState(ACTIVE)
+    , _bit(0)
+    , _byte(0)
+    , msg_buf(NULL)
+    , _storage(Storage())
+    , __errHandler(NULL)
 {
     listenAll();
 }
@@ -253,14 +253,13 @@ J1850VPW* J1850VPW::setActiveLevel(uint8_t active)
 
 J1850VPW* J1850VPW::init(uint8_t rxPin, uint8_t txPin)
 {
-	J1850VPWFriend::instance = this;
     init(rxPin);
 
     __txPin = Pin(txPin, PIN_MODE_OUTPUT);
     __txPin.write(PASSIVE);
-	
-	//pinMode(BitBanger_LED_PIN, OUTPUT);
-	//digitalWrite(BitBanger_LED_PIN, HIGH);
+
+    //pinMode(BitBanger_LED_PIN, OUTPUT);
+    //digitalWrite(BitBanger_LED_PIN, HIGH);
     return this;
 }
 
@@ -271,20 +270,13 @@ J1850VPW* J1850VPW::initTx(uint8_t txPin)
     return this;
 }
 
-J1850VPW* J1850VPW::killTx(uint8_t txPin)
+J1850VPW* J1850VPW::init(uint8_t rxPin)
 {
-	pinMode(txPin, OUTPUT);
-    digitalWrite(txPin, HIGH);	
-	//__txPin = Pin(txPin, OUTPUT);
-    return this;
-}
-
-J1850VPW* J1850VPW::init(uint8_t rxPin) 
-{	
-	attachInterrupt(digitalPinToInterrupt(rxPin), &J1850VPWFriend::__handleRnChange, CHANGE);
-    __rxPin = Pin(rxPin, PIN_MODE_INPUT_PULLUP);	
+    J1850VPWFriend::instance = this;
+    __rxPin = Pin(rxPin, PIN_MODE_INPUT_PULLUP);
     _currState = __rxPin.read();
-	
+    attachInterrupt(digitalPinToInterrupt(rxPin), &J1850VPWFriend::__handleRnChange, CHANGE);
+
     return this;
 }
 
@@ -294,15 +286,15 @@ J1850VPW* J1850VPW::onError(onErrorHandler errHandler)
     return this;
 }
 
-int8_t J1850VPW::tryGetReceivedFrame(uint8_t *pBuff, bool justValid /*= true*/)
+int8_t J1850VPW::tryGetReceivedFrame(uint8_t* pBuff, bool justValid /*= true*/)
 {
     uint8_t size;
     bool crcOK = true;
 
     while (true)
-    {		
+    {
         size = _storage.tryPopItem(pBuff);
-		
+
         if (!size)
         {
             return 0;
@@ -311,25 +303,25 @@ int8_t J1850VPW::tryGetReceivedFrame(uint8_t *pBuff, bool justValid /*= true*/)
         {
             crcOK = false;
             handleErrorsInternal(J1850_Read, J1850_ERR_CRC);
-        }		
+        }
         if (!justValid || crcOK)
         {
             break;
-        }		
+        }
     }
-	//digitalWrite(BitBanger_LED_PIN, HIGH);
+    //digitalWrite(BitBanger_LED_PIN, HIGH);
     return size;
 }
 
 void J1850VPW::onFrameRead()
-{	
+{
     if (!IS_BETWEEN(_byte, 2, BS))
     {
         return;
     }
 
-    uint8_t *pByte, bit;
-    
+    uint8_t* pByte, bit;
+
     pByte = getBit(_buff[0], &bit);
     if (pByte && (*pByte & (1 << bit)) == 0) {
         _storage.push(_buff, _byte);
@@ -341,8 +333,8 @@ J1850VPW* J1850VPW::listenAll() {
     return this;
 }
 
-J1850VPW* J1850VPW::listen(uint8_t *ids) {
-    uint8_t *pByte, bit;
+J1850VPW* J1850VPW::listen(uint8_t* ids) {
+    uint8_t* pByte, bit;
     while (*ids) {
         pByte = getBit(*ids, &bit);
 
@@ -360,8 +352,8 @@ J1850VPW* J1850VPW::ignoreAll() {
     return this;
 }
 
-J1850VPW* J1850VPW::ignore(uint8_t *ids) {
-    uint8_t *pByte, bit;
+J1850VPW* J1850VPW::ignore(uint8_t* ids) {
+    uint8_t* pByte, bit;
     while (*ids) {
         pByte = getBit(*ids, &bit);
 
@@ -374,7 +366,7 @@ J1850VPW* J1850VPW::ignore(uint8_t *ids) {
     return this;
 }
 
-uint8_t* J1850VPW::getBit(uint8_t id, uint8_t *pBit) {
+uint8_t* J1850VPW::getBit(uint8_t id, uint8_t* pBit) {
     if (!id) {
         *pBit = 0xff;
         return NULL;
@@ -385,7 +377,7 @@ uint8_t* J1850VPW::getBit(uint8_t id, uint8_t *pBit) {
 }
 
 // NB! Performance critical!!! Do not split
-uint8_t J1850VPW::send(uint8_t *pData, uint8_t nbytes, int16_t timeoutMs /*= -1*/)
+uint8_t J1850VPW::send(uint8_t* pData, uint8_t nbytes, int16_t timeoutMs /*= -1*/)
 {
     if (isReadonly())
     {
@@ -397,8 +389,8 @@ uint8_t J1850VPW::send(uint8_t *pData, uint8_t nbytes, int16_t timeoutMs /*= -1*
     memcpy(buff, pData, nbytes);
     buff[nbytes] = crc(buff, nbytes); //CRC added here
     nbytes++;
-    
-	/*Serial.print("QQQ: ");
+
+    /*Serial.print("QQQ: ");
     for (int q = 0; q < nbytes; q++) {
          uint8_t w = buff[q];
          if (w < 0x10) {
@@ -407,9 +399,9 @@ uint8_t J1850VPW::send(uint8_t *pData, uint8_t nbytes, int16_t timeoutMs /*= -1*
          Serial.print(String(w, HEX));
      }
      Serial.println();*/
-    
 
-    uint8_t *msg_buf = buff;
+
+    uint8_t* msg_buf = buff;
     unsigned long now;
 
     // wait for idle
@@ -435,7 +427,7 @@ uint8_t J1850VPW::send(uint8_t *pData, uint8_t nbytes, int16_t timeoutMs /*= -1*
 
     // SOF
     //pauseInterrupts;
-	detachInterrupt(digitalPinToInterrupt(__rxPin._pin));
+    detachInterrupt(digitalPinToInterrupt(__rxPin._pin));
     __txPin.write(ACTIVE);
     now = micros();
     while (micros() - now < TX_SOF)
@@ -459,10 +451,11 @@ uint8_t J1850VPW::send(uint8_t *pData, uint8_t nbytes, int16_t timeoutMs /*= -1*
                 {
                     if (__rxPin.read() == ACTIVE)
                     {
-                        if (delay - (micros() - now)  < RX_ARBITRATION_TOL) //Arbitration not lost
+                        if (delay - (micros() - now) < RX_ARBITRATION_TOL) //Arbitration not lost
                         {
                             now = micros() - delay - 1; //resync to faster module
-                        } else //We lost arbitration so drop out
+                        }
+                        else //We lost arbitration so drop out
                         {
                             result = J1850_ERR_ARBITRATION_LOST;
                             goto stop;
@@ -499,12 +492,12 @@ uint8_t J1850VPW::send(uint8_t *pData, uint8_t nbytes, int16_t timeoutMs /*= -1*
 
 stop:
     //resumeInterrupts
-	attachInterrupt(digitalPinToInterrupt(__rxPin._pin), &J1850VPWFriend::__handleRnChange, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(__rxPin._pin), &J1850VPWFriend::__handleRnChange, CHANGE);
     return handleErrorsInternal(J1850_Write, result);
 }
 
 // NB! Performance critical!!! Do not split
-uint8_t J1850VPW::sendWithNoCRC(uint8_t *pData, uint8_t nbytes, int16_t timeoutMs /*= -1*/)
+uint8_t J1850VPW::sendWithNoCRC(uint8_t* pData, uint8_t nbytes, int16_t timeoutMs /*= -1*/)
 {
     if (isReadonly())
     {
@@ -515,8 +508,8 @@ uint8_t J1850VPW::sendWithNoCRC(uint8_t *pData, uint8_t nbytes, int16_t timeoutM
     static uint8_t buff[BS];
     memcpy(buff, pData, nbytes);
     //Do not add CRC
-	
-	/*Serial.print("QQQ: ");
+
+    /*Serial.print("QQQ: ");
      for (int q = 0; q < nbytes; q++) {
          uint8_t w = buff[q];
          if (w < 0x10) {
@@ -525,9 +518,9 @@ uint8_t J1850VPW::sendWithNoCRC(uint8_t *pData, uint8_t nbytes, int16_t timeoutM
          Serial.print(String(w, HEX));
      }
      Serial.println();*/
-    
 
-    uint8_t *msg_buf = buff;
+
+    uint8_t* msg_buf = buff;
     unsigned long now;
 
     // wait for idle
@@ -552,9 +545,9 @@ uint8_t J1850VPW::sendWithNoCRC(uint8_t *pData, uint8_t nbytes, int16_t timeoutM
     }
 
     // SOF
-	
+
     //pauseInterrupts
-	detachInterrupt(digitalPinToInterrupt(__rxPin._pin));
+    detachInterrupt(digitalPinToInterrupt(__rxPin._pin));
     __txPin.write(ACTIVE);
     now = micros();
     while (micros() - now < TX_SOF)
@@ -578,14 +571,15 @@ uint8_t J1850VPW::sendWithNoCRC(uint8_t *pData, uint8_t nbytes, int16_t timeoutM
                 {
                     if (__rxPin.read() == ACTIVE)
                     {
-                        if (delay - (micros() - now)  < RX_ARBITRATION_TOL) //Arbitration not lost
+                        if (delay - (micros() - now) < RX_ARBITRATION_TOL) //Arbitration not lost
                         {
                             now = micros() - delay - 1; //resync to faster module
-                        } else //We lost arbitration so drop out
+                        }
+                        else //We lost arbitration so drop out
                         {
                             //result = J1850_ERR_ARBITRATION_LOST;
                             //goto stop;
-							now = micros() - delay - 1;
+                            now = micros() - delay - 1;
                         }
                     }
                 }
@@ -619,7 +613,7 @@ uint8_t J1850VPW::sendWithNoCRC(uint8_t *pData, uint8_t nbytes, int16_t timeoutM
 
 stop:
     //resumeInterrupts	
-	attachInterrupt(digitalPinToInterrupt(__rxPin._pin), &J1850VPWFriend::__handleRnChange, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(__rxPin._pin), &J1850VPWFriend::__handleRnChange, CHANGE);
     return handleErrorsInternal(J1850_Write, result);
 }
 
