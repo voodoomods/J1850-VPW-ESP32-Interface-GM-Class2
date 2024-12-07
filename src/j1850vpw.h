@@ -1,6 +1,5 @@
 /*************************************************************************
 **  ESP32 J1850VPW Interface (GM Class 2 Serial)
-**  by Nicolas Houghtaling @ VoodooMods
 **
 **  Former Project J1850-VPW-Arduino-Transceiver-Library
 **  https://github.com/matafonoff/J1850-VPW-Arduino-Transceiver-Library
@@ -10,9 +9,8 @@
 **
 **  Released under Microsoft Public License
 **
-**  contact: admin@voodoomods.com
-**  homepage: voodoomods.com
 **************************************************************************/
+
 #pragma once
 #include <Arduino.h>
 #include "common.h"
